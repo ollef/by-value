@@ -74,6 +74,12 @@ private:
 	alignas(Alignment) unsigned char _data[Size];
 };
 
+template<class T> constexpr
+const T& maximum(const T& a, const T& b)
+{
+	return (a > b) ? a : b;
+}
+
 template<class...Ts>
 struct max;
 
@@ -87,12 +93,8 @@ struct max<>
 template<class T, class...Ts>
 struct max<T, Ts...>
 {
-	static constexpr std::size_t size = (sizeof (T) > max<Ts...>::size)
-		? sizeof (T)
-		: max<Ts...>::size;
-	static constexpr std::size_t alignment = (alignof (T) > max<Ts...>::alignment)
-		? alignof (T)
-		: max<Ts...>::alignment;
+	static constexpr std::size_t size = maximum(sizeof (T), max<Ts...>::size);
+	static constexpr std::size_t alignment = maximum(alignof (T), max<Ts...>::alignment);
 };
 
 } // namespace poly
